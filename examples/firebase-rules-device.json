@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "readings": {
+      ".read": true,
+      ".indexOn": ["timestamp"],
+      "$readingId": {
+        ".write": "auth != null && auth.uid === 'g7ZNFCPkz6Xd7C6KkXaJWqBGik82' && !data.exists()",
+        ".validate": "newData.hasChildren(['temperature', 'humidity', 'timestamp']) && newData.child('temperature').isNumber() && newData.child('humidity').isNumber() && newData.child('timestamp').isNumber()"
+      }
+    }
+  }
+}
