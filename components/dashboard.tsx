@@ -5,8 +5,8 @@ import Image from "next/image";
 import { onValue, limitToLast, orderByChild, query, ref } from "firebase/database";
 import {
   Activity, ArrowUpRight, BellRing, ChevronDown, CircleAlert, Clock3,
-  Database, Droplets, Gauge, Menu, Radio, ShieldCheck, Thermometer,
-  Waves, Wifi, X,
+  Cloud, Database, Droplets, Gauge, Menu, Radio, ShieldCheck,
+  Thermometer, Truck, Waves, Wifi, X,
 } from "lucide-react";
 import { firebaseDatabase, hasFirebaseConfig } from "@/lib/firebase";
 import { conditionFor, demoSeed, normalizeReadings, PROTOTYPE_LIMITS, type Condition, type Reading } from "@/lib/readings";
@@ -35,20 +35,30 @@ function useReadings() {
 
   useEffect(() => {
     if (hasFirebaseConfig) {
+      let connectionTimer: number | undefined;
       try {
         const database = firebaseDatabase();
         if (!database) return;
+        connectionTimer = window.setTimeout(() => setConnection((current) => current === "connecting" ? "error" : current), 10_000);
         const unsubscribe = onValue(
           query(ref(database, "readings"), orderByChild("timestamp"), limitToLast(100)),
           (snapshot) => {
+            window.clearTimeout(connectionTimer);
             const next = normalizeReadings(snapshot.val());
             setReadings(next);
             setConnection(next.length ? "live" : "empty");
           },
-          () => setConnection("error"),
+          () => {
+            window.clearTimeout(connectionTimer);
+            setConnection("error");
+          },
         );
-        return unsubscribe;
+        return () => {
+          window.clearTimeout(connectionTimer);
+          unsubscribe();
+        };
       } catch {
+        window.clearTimeout(connectionTimer);
         const errorTimer = window.setTimeout(() => setConnection("error"), 0);
         return () => window.clearTimeout(errorTimer);
       }
@@ -189,6 +199,7 @@ export default function Dashboard() {
   const [clock, setClock] = useState(() => Date.now());
   const [mobileOpen, setMobileOpen] = useState(false);
   const [historyExpanded, setHistoryExpanded] = useState(false);
+  const [routeDetail, setRouteDetail] = useState<"truck" | "cloud">("truck");
   useEffect(() => {
     const timer = window.setInterval(() => setClock(Date.now()), 15_000);
     return () => window.clearInterval(timer);
@@ -200,6 +211,8 @@ export default function Dashboard() {
   const status = latest?.status ?? "NORMAL";
   const age = latest && connection === "live" ? clock - latest.timestamp : 0;
   const freshness = age > 120_000 ? "Perangkat tidak mengirim data" : age > 30_000 ? "Data sensor terlambat" : "Data langsung";
+  const routeActive = connection === "demo" || (connection === "live" && age <= 30_000);
+  const routeLabel = connection === "demo" ? "SIMULASI" : connection === "live" ? age > 120_000 ? "DATA TERHENTI" : age > 30_000 ? "DATA TERLAMBAT" : "DATA AKTIF" : connection === "error" ? "KONEKSI GAGAL" : connection === "empty" ? "BELUM ADA DATA" : "MENUNGGU";
   const recent = useMemo(() => [...readings].reverse().slice(0, historyExpanded ? 100 : 7), [readings, historyExpanded]);
   const alerts = useMemo(() => readings.filter((row, index) =>
     row.status !== "NORMAL" && (index === 0 || readings[index - 1].status !== row.status),
@@ -246,15 +259,28 @@ export default function Dashboard() {
               <span><Radio size={16} /> {connection === "demo" ? "Mode simulasi" : connection === "live" ? freshness : connectionLabel}</span>
             </div>
           </div>
-          <div className="hero-asset" aria-hidden="true">
-            <Image src="/cold-storage-3d.webp" alt="" width={520} height={347} priority />
-            <span>RUANG PENYIMPANAN / TG-01</span>
+          <div className="hero-asset">
+            <div className="hero-asset-scene" aria-hidden="true">
+              <Image src="/cold-storage-3d.webp" alt="" width={520} height={347} priority unoptimized />
+            </div>
+            <div className="route-panel">
+              <div className="route-panel-heading">
+                <span>ALUR DATA SENSOR</span>
+                <span className="route-connection"><span className={routeActive ? "route-live-dot is-active" : "route-live-dot"} />{routeLabel}</span>
+              </div>
+              <div className="route-steps">
+                <button type="button" className={routeDetail === "truck" ? "route-step is-selected" : "route-step"} aria-pressed={routeDetail === "truck"} onClick={() => setRouteDetail("truck")}><Truck size={19} /><span>Armada</span></button>
+                <span className={routeActive ? "route-line is-active" : "route-line"} aria-hidden="true"><span className="route-packet" /></span>
+                <button type="button" className={routeDetail === "cloud" ? "route-step is-selected" : "route-step"} aria-pressed={routeDetail === "cloud"} onClick={() => setRouteDetail("cloud")}><Cloud size={19} /><span>Firebase</span></button>
+              </div>
+              <p className="route-description" aria-live="polite">{routeDetail === "truck" ? "DHT22 dan ESP32 membaca kondisi ruang penyimpanan." : "Firebase mengirim pembacaan terbaru ke dashboard."}</p>
+            </div>
           </div>
         </section>
 
         <section className="dashboard-section container" id="monitoring" aria-labelledby="dashboard-heading">
           <div className="section-heading">
-            <div><span className="eyebrow section-eyebrow"><span className="eyebrow-line" /> DASHBOARD MONITORING</span><h2 id="dashboard-heading">Kondisi dalam satu pandangan.</h2><p>Data ruang penyimpanan mobil logistik • Unit TG-01</p></div>
+            <div><span className="eyebrow section-eyebrow"><span className="eyebrow-line" /> DASHBOARD MONITORING</span><h2 id="dashboard-heading">Pembacaan sensor</h2><p>Ruang penyimpanan mobil logistik · Unit TG-01</p></div>
             <div className={`data-source data-source-${connection}`}><span className="source-icon"><Wifi size={17} /></span><span><strong>{connectionLabel}</strong><small>{connection === "demo" ? "Data diperbarui tiap 5 detik" : connection === "live" ? `Terakhir: ${formatTime(latest?.timestamp)}` : "Lihat status di bawah"}</small></span></div>
           </div>
 
@@ -263,8 +289,8 @@ export default function Dashboard() {
           {connection === "live" && age > 30_000 && <div className="notice" role="status"><CircleAlert size={18} /> {freshness}. Pembacaan terakhir diterima pukul {formatTime(latest?.timestamp)}.</div>}
 
           <div className="metric-grid" aria-busy={connection === "connecting"}>
-            <article className="metric-card metric-temperature"><div className="metric-card-top"><span className="metric-icon temp-icon"><Thermometer size={23} /></span><span className="metric-label">SUHU RUANG</span><ArrowUpRight className="metric-corner" size={17} /></div><div className="metric-value">{latest ? latest.temperature.toFixed(1) : connection === "connecting" ? <span className="metric-skeleton" aria-label="Memuat suhu" /> : "—"}{latest && <span>°C</span>}</div><div className="metric-card-bottom"><span className={`delta ${temperatureDelta > 0 ? "delta-up" : ""}`}>{previous ? `${temperatureDelta > 0 ? "+" : ""}${temperatureDelta.toFixed(1)}° dari sebelumnya` : "Menunggu pembacaan berikutnya"}</span><span className="mini-sparkline temp-sparkline" /></div></article>
-            <article className="metric-card metric-humidity"><div className="metric-card-top"><span className="metric-icon humidity-icon"><Droplets size={23} /></span><span className="metric-label">KELEMBAPAN</span><ArrowUpRight className="metric-corner" size={17} /></div><div className="metric-value">{latest ? Math.round(latest.humidity) : connection === "connecting" ? <span className="metric-skeleton" aria-label="Memuat kelembapan" /> : "—"}{latest && <span>%</span>}</div><div className="metric-card-bottom"><span className={`delta ${humidityDelta > 0 ? "delta-up" : ""}`}>{previous ? `${humidityDelta > 0 ? "+" : ""}${humidityDelta.toFixed(0)}% dari sebelumnya` : "Menunggu pembacaan berikutnya"}</span><span className="mini-sparkline humidity-sparkline" /></div></article>
+            <article className="metric-card metric-temperature"><div className="metric-card-top"><span className="metric-icon temp-icon"><Thermometer size={23} /></span><span className="metric-label">SUHU RUANG</span><ArrowUpRight className="metric-corner" size={17} /></div><div className="metric-value">{latest ? latest.temperature.toFixed(1) : connection === "connecting" ? <span className="metric-skeleton" aria-label="Memuat suhu" /> : "—"}{latest && <span>°C</span>}</div><div className="metric-card-bottom"><span className={`delta ${temperatureDelta > 0 ? "delta-up" : ""}`}>{previous ? `${temperatureDelta > 0 ? "+" : ""}${temperatureDelta.toFixed(1)}° dari sebelumnya` : connection === "connecting" ? "Memuat pembacaan sensor" : "Belum ada pembacaan"}</span></div></article>
+            <article className="metric-card metric-humidity"><div className="metric-card-top"><span className="metric-icon humidity-icon"><Droplets size={23} /></span><span className="metric-label">KELEMBAPAN</span><ArrowUpRight className="metric-corner" size={17} /></div><div className="metric-value">{latest ? Math.round(latest.humidity) : connection === "connecting" ? <span className="metric-skeleton" aria-label="Memuat kelembapan" /> : "—"}{latest && <span>%</span>}</div><div className="metric-card-bottom"><span className={`delta ${humidityDelta > 0 ? "delta-up" : ""}`}>{previous ? `${humidityDelta > 0 ? "+" : ""}${humidityDelta.toFixed(0)}% dari sebelumnya` : connection === "connecting" ? "Memuat pembacaan sensor" : "Belum ada pembacaan"}</span></div></article>
             <article className="metric-card metric-update"><div className="metric-card-top"><span className="metric-icon update-icon"><Clock3 size={23} /></span><span className="metric-label">PEMBARUAN TERAKHIR</span><Activity className="metric-corner" size={17} /></div><div className="metric-value metric-time">{connection === "connecting" ? <span className="metric-skeleton" aria-label="Memuat waktu pembaruan" /> : formatTime(latest?.timestamp)}</div><div className="metric-card-bottom"><span>{latest ? "Pembacaan sensor terbaru" : "Menunggu pembacaan sensor"}</span><span className="metric-device">TG-01</span></div></article>
           </div>
 
