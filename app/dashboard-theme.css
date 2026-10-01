@@ -31,7 +31,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid #7dd3fc; outline-offs
 .brand-mark { width: 39px; height: 39px; background: #e2f3f7; color: #087ea3; border: 1px solid #c1e0e9; box-shadow: none; }
 .main-nav { width: 100%; display: flex; flex-direction: column; align-items: stretch; gap: 5px; margin-top: 68px; font-size: 13px; }
 .main-nav a { display: flex; align-items: center; gap: 13px; min-height: 46px; padding: 0 14px; color: #567380; border-radius: 9px; transition: background .2s, color .2s; }
-.main-nav a:first-child { color: #086b8a; background: #e5f4f8; }
+.main-nav a.is-current { color: #086b8a; background: #e5f4f8; }
 .main-nav a:hover { color: #173746; background: #edf6f8; }
 .main-nav svg { color: #3186a1; flex: none; }
 .header-actions { margin-top: auto; padding: 19px 8px 0; border-top: 1px solid var(--border); }
@@ -41,7 +41,12 @@ a:focus-visible, button:focus-visible { outline: 2px solid #7dd3fc; outline-offs
 .connection-empty, .connection-connecting { background: #f2f5f7; color: #526c78; border-color: #dbe5e9; }
 .mobile-toggle { display: none; }
 
-.landing { position: relative; display: grid; place-items: center; min-height: min(690px, calc(100dvh - 32px)); padding-block: 82px 72px; text-align: center; isolation: isolate; }
+.landing-page { min-height: 100dvh; }
+.landing-header { height: 74px; background: #ffffff; border-bottom: 1px solid var(--border); }
+.landing-header-inner { display: flex; align-items: center; justify-content: space-between; height: 100%; }
+.landing-header-link { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 0 14px; color: #086b8a; border: 1px solid #c9dce4; border-radius: 8px; font-size: 12px; font-weight: 800; }
+.landing-header-link:hover { background: #eaf5f8; }
+.landing { position: relative; display: grid; place-items: center; min-height: calc(100dvh - 74px); padding-block: 82px 72px; text-align: center; isolation: isolate; }
 .landing::before { content: ""; position: absolute; inset: 9% 5%; z-index: -1; border-radius: 50%; background: radial-gradient(ellipse at center, #e3f3f8 0%, #eaf5f86b 38%, transparent 72%); pointer-events: none; }
 .landing-copy { width: min(100%, 790px); }
 .landing-kicker { margin: 0 0 23px; color: #126d8e; font-size: 11px; font-weight: 800; letter-spacing: 1.4px; }
@@ -75,7 +80,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid #7dd3fc; outline-offs
 .hero-status-critical .hero-status-icon { color: #c94c55; background: #ffefef; border-color: #ecc7c8; }
 .hero-status-waiting .hero-status-icon { color: #6f8895; background: #edf2f5; border-color: #d5e2e8; }
 .hero-status-label { font-size: 10px; color: #547486; font-weight: 800; letter-spacing: 1.5px; }
-.hero h2 { font: 700 clamp(27px, 2.5vw, 39px)/1.15 var(--font-head); letter-spacing: -1.3px; margin: 6px 0 0; color: #173746; white-space: normal; }
+.hero h1 { font: 700 clamp(27px, 2.5vw, 39px)/1.15 var(--font-head); letter-spacing: -1.3px; margin: 6px 0 0; color: #173746; white-space: normal; }
 .hero-content > p { max-width: 590px; margin: 15px 0 0 73px; color: #4f6b78; font-size: 13px; line-height: 1.55; }
 .hero-meta { display: flex; flex-wrap: wrap; gap: 9px; margin: 26px 0 0 73px; }
 .hero-meta span { display: inline-flex; align-items: center; gap: 7px; padding: 8px 11px; color: #53717e; background: #ffffffa8; border: 1px solid #c9e0e9; border-radius: 7px; font-size: 11px; }
@@ -272,8 +277,10 @@ td strong { color: #1f4352; }
   .connection-chip { font-size: 0; width: 38px; height: 38px; padding: 0; justify-content: center; }
   .connection-chip .connection-dot { width: 8px; height: 8px; }
   .mobile-toggle { min-width: 44px; }
-  .landing { min-height: 510px; padding-block: 64px 58px; }
-  .landing::before { inset: 12% -10%; }
+  .landing-header { height: 70px; }
+  .landing-header-link { min-height: 44px; padding-inline: 10px; font-size: 11px; }
+  .landing { min-height: calc(100dvh - 70px); padding-block: 64px 58px; }
+  .landing::before { inset: 12% 0; }
   .landing-kicker { margin-bottom: 20px; font-size: 10px; letter-spacing: 1.1px; }
   .landing h1 { font-size: clamp(36px, 10vw, 48px); letter-spacing: -.05em; }
   .landing-lede { margin-top: 21px; font-size: 14px; }
@@ -284,7 +291,7 @@ td strong { color: #1f4352; }
   .hero-content { padding: 21px 20px 14px; }
   .hero-status { gap: 10px; margin-top: 14px; }
   .hero-status-icon { width: 43px; height: 43px; }
-  .hero h2 { font-size: 23px; letter-spacing: -.7px; }
+  .hero h1 { font-size: 23px; letter-spacing: -.7px; }
   .hero-content > p { margin: 10px 0 0; font-size: 12px; line-height: 1.5; }
   .hero-meta { margin: 13px 0 0; gap: 6px; }
   .hero-meta span { padding: 7px 8px; font-size: 10px; }

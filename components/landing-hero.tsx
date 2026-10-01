@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 const titles = ["terpantau.", "terkendali.", "terjaga."];
@@ -30,8 +31,8 @@ export default function LandingHero() {
         </h1>
         <p className="landing-lede">Pantau suhu dan kelembapan ruang penyimpanan tuna, dari sensor di armada hingga pembacaan di dashboard.</p>
         <div className="landing-actions">
-          <a className="landing-cta" href="#dashboard">Buka dashboard <ArrowRight size={18} aria-hidden="true" /></a>
-          <a className="landing-link" href="#cara-kerja">Lihat cara kerja</a>
+          <Link className="landing-cta" href="/dashboard">Buka dashboard <ArrowRight size={18} aria-hidden="true" /></Link>
+          <Link className="landing-link" href="/dashboard#cara-kerja">Lihat cara kerja</Link>
         </div>
         <p className="landing-path">DHT22 + ESP32 <span aria-hidden="true">/</span> Firebase <span aria-hidden="true">/</span> Dashboard</p>
       </div>

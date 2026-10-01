@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { onValue, limitToLast, orderByChild, query, ref } from "firebase/database";
 import {
   Activity, ArrowUpRight, BellRing, ChevronDown, CircleAlert, Clock3,
@@ -10,7 +11,6 @@ import {
 } from "lucide-react";
 import { firebaseDatabase, hasFirebaseConfig } from "@/lib/firebase";
 import { conditionFor, demoSeed, normalizeReadings, PROTOTYPE_LIMITS, type Condition, type Reading } from "@/lib/readings";
-import LandingHero from "@/components/landing-hero";
 import ScrollWordReveal from "@/components/scroll-word-reveal";
 
 type Scenario = "normal" | "warning" | "critical";
@@ -226,13 +226,13 @@ export default function Dashboard() {
       <a className="skip-link" href="#monitoring">Lewati ke dashboard</a>
       <header className="site-header">
         <div className="container header-inner">
-          <a className="brand" href="#beranda" aria-label="TunaGuard, kembali ke beranda">
+          <Link className="brand" href="/" aria-label="TunaGuard, kembali ke beranda">
             <span className="brand-mark"><Waves size={23} strokeWidth={2.7} /></span>
             <span>Tuna<span>Guard</span><small>MONITORING SYSTEM</small></span>
-          </a>
+          </Link>
           <nav id="primary-navigation" className={`main-nav ${mobileOpen ? "is-open" : ""}`} aria-label="Navigasi utama">
-            <a href="#beranda" onClick={() => setMobileOpen(false)}><Gauge size={17} /> Beranda</a>
-            <a href="#dashboard" onClick={() => setMobileOpen(false)}><Activity size={17} /> Dashboard</a>
+            <Link href="/" onClick={() => setMobileOpen(false)}><Gauge size={17} /> Beranda</Link>
+            <a className="is-current" href="#dashboard" onClick={() => setMobileOpen(false)}><Activity size={17} /> Dashboard</a>
             <a href="#riwayat" onClick={() => setMobileOpen(false)}><Clock3 size={17} /> Riwayat data</a>
             <a href="#peringatan" onClick={() => setMobileOpen(false)}><BellRing size={17} /> Peringatan</a>
             <a href="#cara-kerja" onClick={() => setMobileOpen(false)}><Database size={17} /> Cara kerja</a>
@@ -244,8 +244,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <main id="beranda">
-        <LandingHero />
+      <main>
         <section id="dashboard" className={"hero container hero-" + (latest ? status.toLowerCase() : "waiting")} aria-labelledby="hero-title">
           <div className="hero-content">
             <span className="eyebrow hero-eyebrow">MONITORING RANTAI DINGIN <span className="hero-divider" /> UNIT TG-01</span>
@@ -253,7 +252,7 @@ export default function Dashboard() {
               <span className="hero-status-icon">{status === "NORMAL" && latest ? <ShieldCheck size={27} /> : <CircleAlert size={27} />}</span>
               <div>
                 <span className="hero-status-label">KONDISI PENYIMPANAN</span>
-                <h2 id="hero-title">{latest ? statusCopy[status].label : connection === "connecting" ? "Menghubungkan sensor" : "Menunggu data sensor"}</h2>
+                <h1 id="hero-title">{latest ? statusCopy[status].label : connection === "connecting" ? "Menghubungkan sensor" : "Menunggu data sensor"}</h1>
               </div>
             </div>
             <p>{latest ? statusCopy[status].message : connection === "connecting" ? "Menyiapkan pembacaan suhu dan kelembapan dari perangkat." : "Data suhu dan kelembapan akan tampil setelah perangkat mengirim pembacaan pertama."}</p>
@@ -317,7 +316,7 @@ export default function Dashboard() {
         <section className="workflow-section" id="cara-kerja" aria-labelledby="workflow-heading"><div className="container"><div className="workflow-heading"><div><span className="eyebrow section-eyebrow"><span className="eyebrow-line" /> CARA KERJA</span><h2 id="workflow-heading">Dari sensor, langsung ke keputusan.</h2></div><p>Alur data sederhana yang membantu tim logistik merespons perubahan kondisi lebih cepat.</p></div><div className="workflow-grid"><div className="workflow-step"><span className="step-number">01 / DETEKSI</span><span className="step-icon"><Thermometer size={25} /></span><h3>Sensor membaca</h3><p>DHT22 mengukur suhu dan kelembapan di ruang penyimpanan tuna.</p></div><div className="workflow-step"><span className="step-number">02 / KIRIM</span><span className="step-icon"><Wifi size={25} /></span><h3>Data dikirim</h3><p>ESP32 mengolah status lalu mengirimkan pembacaan melalui WiFi.</p></div><div className="workflow-step"><span className="step-number">03 / SIMPAN</span><span className="step-icon"><Database size={25} /></span><h3>Firebase mencatat</h3><p>Setiap nilai, status, dan waktu tersimpan sebagai riwayat perjalanan.</p></div><div className="workflow-step"><span className="step-number">04 / PANTAU</span><span className="step-icon"><Activity size={25} /></span><h3>Tim memantau</h3><p>Dashboard menampilkan kondisi terkini dan peringatan saat batas terlampaui.</p></div></div></div></section>
       </main>
 
-      <footer className="site-footer"><div className="container footer-bottom"><a className="brand footer-brand" href="#beranda"><span className="brand-mark"><Waves size={21} strokeWidth={2.7} /></span><span>Tuna<span>Guard</span><small>MONITORING SYSTEM</small></span></a><span>Prototype monitoring IoT untuk logistik tuna · © {new Date().getFullYear()} TunaGuard</span><a className="footer-back" href="#beranda">Kembali ke ringkasan <ArrowUpRight size={16} /></a></div></footer>
+      <footer className="site-footer"><div className="container footer-bottom"><Link className="brand footer-brand" href="/"><span className="brand-mark"><Waves size={21} strokeWidth={2.7} /></span><span>Tuna<span>Guard</span><small>MONITORING SYSTEM</small></span></Link><span>Prototype monitoring IoT untuk logistik tuna · © {new Date().getFullYear()} TunaGuard</span><a className="footer-back" href="#dashboard">Kembali ke ringkasan <ArrowUpRight size={16} /></a></div></footer>
     </div>
   );
 }
