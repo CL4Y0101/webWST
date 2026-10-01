@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { onValue, limitToLast, orderByChild, query, ref } from "firebase/database";
 import {
-  Activity, ArrowUpRight, BellRing, ChevronDown, CircleAlert, Clock3,
+  ArrowUpRight, BellRing, ChevronDown, CircleAlert, Clock3,
   Cloud, Database, Droplets, Gauge, Radio, ShieldCheck,
   Thermometer, Truck, Waves, Wifi,
 } from "lucide-react";
@@ -230,16 +230,13 @@ export default function Dashboard() {
             <span className="brand-mark"><Waves size={23} strokeWidth={2.7} /></span>
             <span>Tuna<span>Guard</span><small>MONITORING SYSTEM</small></span>
           </TransitionLink>
-          <div className="header-actions">
-            <span className={`connection-chip connection-${connection}`}><span className="connection-dot" />{connection === "live" ? "Sistem online" : connection === "demo" ? "Demo aktif" : connection === "error" ? "Koneksi gagal" : "Menunggu data"}</span>
-          </div>
         </div>
       </header>
 
       <main>
         <section id="dashboard" className={"hero container hero-" + (latest ? status.toLowerCase() : "waiting")} aria-labelledby="hero-title">
           <div className="hero-content">
-            <span className="eyebrow hero-eyebrow">MONITORING RANTAI DINGIN <span className="hero-divider" /> UNIT TG-01</span>
+            <span className="eyebrow hero-eyebrow">MONITORING RANTAI DINGIN</span>
             <div className={"hero-status hero-status-" + (latest ? status.toLowerCase() : "waiting")}>
               <span className="hero-status-icon">{status === "NORMAL" && latest ? <ShieldCheck size={27} /> : <CircleAlert size={27} />}</span>
               <div>
@@ -259,7 +256,7 @@ export default function Dashboard() {
             </div>
             <div className="route-panel">
               <div className="route-panel-heading">
-                <span>ILUSTRASI ALUR DATA</span>
+                <span>ALUR DATA</span>
                 <span className="route-connection"><span className={routeActive ? "route-live-dot is-active" : "route-live-dot"} />{routeLabel}</span>
               </div>
               <div className="route-steps">
@@ -274,7 +271,7 @@ export default function Dashboard() {
 
         <section className="dashboard-section container" id="monitoring" aria-labelledby="dashboard-heading">
           <div className="section-heading">
-            <div><span className="eyebrow section-eyebrow"><span className="eyebrow-line" /> DASHBOARD MONITORING</span><h2 id="dashboard-heading">Pembacaan sensor</h2><p>Ruang penyimpanan mobil logistik · Unit TG-01</p></div>
+            <div><span className="eyebrow section-eyebrow"><span className="eyebrow-line" /> DASHBOARD MONITORING</span><h2 id="dashboard-heading">Pembacaan sensor</h2><p>Ruang penyimpanan mobil logistik</p></div>
             <div className={`data-source data-source-${connection}`}><span className="source-icon"><Wifi size={17} /></span><span><strong>{connectionLabel}</strong><small>{connection === "demo" ? "Data diperbarui tiap 5 detik" : connection === "live" ? `Terakhir: ${formatTime(latest?.timestamp)}` : "Lihat status di bawah"}</small></span></div>
           </div>
 
@@ -283,9 +280,9 @@ export default function Dashboard() {
           {connection === "live" && age > 30_000 && <div className="notice" role="status"><CircleAlert size={18} /> {freshness}. Pembacaan terakhir diterima pukul {formatTime(latest?.timestamp)}.</div>}
 
           <div className="metric-grid" aria-busy={connection === "connecting"}>
-            <article className="metric-card metric-temperature"><div className="metric-card-top"><span className="metric-icon temp-icon"><Thermometer size={23} /></span><span className="metric-label">SUHU RUANG</span><ArrowUpRight className="metric-corner" size={17} /></div><div className="metric-value">{latest ? latest.temperature.toFixed(1) : connection === "connecting" ? <span className="metric-skeleton" aria-label="Memuat suhu" /> : "—"}{latest && <span>°C</span>}</div><div className="metric-card-bottom"><span className={`delta ${temperatureDelta > 0 ? "delta-up" : ""}`}>{previous ? `${temperatureDelta > 0 ? "+" : ""}${temperatureDelta.toFixed(1)}° dari sebelumnya` : connection === "connecting" ? "Memuat pembacaan sensor" : "Belum ada pembacaan"}</span></div></article>
-            <article className="metric-card metric-humidity"><div className="metric-card-top"><span className="metric-icon humidity-icon"><Droplets size={23} /></span><span className="metric-label">KELEMBAPAN</span><ArrowUpRight className="metric-corner" size={17} /></div><div className="metric-value">{latest ? Math.round(latest.humidity) : connection === "connecting" ? <span className="metric-skeleton" aria-label="Memuat kelembapan" /> : "—"}{latest && <span>%</span>}</div><div className="metric-card-bottom"><span className={`delta ${humidityDelta > 0 ? "delta-up" : ""}`}>{previous ? `${humidityDelta > 0 ? "+" : ""}${humidityDelta.toFixed(0)}% dari sebelumnya` : connection === "connecting" ? "Memuat pembacaan sensor" : "Belum ada pembacaan"}</span></div></article>
-            <article className="metric-card metric-update"><div className="metric-card-top"><span className="metric-icon update-icon"><Clock3 size={23} /></span><span className="metric-label">PEMBARUAN TERAKHIR</span><Activity className="metric-corner" size={17} /></div><div className="metric-value metric-time">{connection === "connecting" ? <span className="metric-skeleton" aria-label="Memuat waktu pembaruan" /> : formatTime(latest?.timestamp)}</div><div className="metric-card-bottom"><span>{latest ? "Pembacaan sensor terbaru" : "Menunggu pembacaan sensor"}</span><span className="metric-device">TG-01</span></div></article>
+            <article className="metric-card metric-temperature"><div className="metric-card-top"><span className="metric-icon temp-icon"><Thermometer size={23} /></span><span className="metric-label">SUHU RUANG</span></div><div className="metric-value">{latest ? latest.temperature.toFixed(1) : connection === "connecting" ? <span className="metric-skeleton" aria-label="Memuat suhu" /> : "—"}{latest && <span>°C</span>}</div><div className="metric-card-bottom"><span className={`delta ${temperatureDelta > 0 ? "delta-up" : ""}`}>{previous ? `${temperatureDelta > 0 ? "+" : ""}${temperatureDelta.toFixed(1)}° dari sebelumnya` : connection === "connecting" ? "Memuat pembacaan sensor" : "Belum ada pembacaan"}</span></div></article>
+            <article className="metric-card metric-humidity"><div className="metric-card-top"><span className="metric-icon humidity-icon"><Droplets size={23} /></span><span className="metric-label">KELEMBAPAN</span></div><div className="metric-value">{latest ? Math.round(latest.humidity) : connection === "connecting" ? <span className="metric-skeleton" aria-label="Memuat kelembapan" /> : "—"}{latest && <span>%</span>}</div><div className="metric-card-bottom"><span className={`delta ${humidityDelta > 0 ? "delta-up" : ""}`}>{previous ? `${humidityDelta > 0 ? "+" : ""}${humidityDelta.toFixed(0)}% dari sebelumnya` : connection === "connecting" ? "Memuat pembacaan sensor" : "Belum ada pembacaan"}</span></div></article>
+            <article className="metric-card metric-update"><div className="metric-card-top"><span className="metric-icon update-icon"><Clock3 size={23} /></span><span className="metric-label">PEMBARUAN TERAKHIR</span></div><div className="metric-value metric-time">{connection === "connecting" ? <span className="metric-skeleton" aria-label="Memuat waktu pembaruan" /> : formatTime(latest?.timestamp)}</div><div className="metric-card-bottom"><span>{latest ? "Waktu pembacaan sensor" : "Menunggu pembacaan sensor"}</span></div></article>
           </div>
 
           <div className="analytics-grid">
