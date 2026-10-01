@@ -265,12 +265,12 @@ export default function Dashboard() {
             </div>
             <div className="route-panel">
               <div className="route-panel-heading">
-                <span>ALUR DATA SENSOR</span>
+                <span>ILUSTRASI ALUR DATA</span>
                 <span className="route-connection"><span className={routeActive ? "route-live-dot is-active" : "route-live-dot"} />{routeLabel}</span>
               </div>
               <div className="route-steps">
                 <button type="button" className={routeDetail === "truck" ? "route-step is-selected" : "route-step"} aria-pressed={routeDetail === "truck"} onClick={() => setRouteDetail("truck")}><Truck size={19} /><span>Armada</span></button>
-                <span className={routeActive ? "route-line is-active" : "route-line"} aria-hidden="true"><span className="route-packet" /></span>
+                <span className="route-line" aria-hidden="true"><span className="route-packet" /></span>
                 <button type="button" className={routeDetail === "cloud" ? "route-step is-selected" : "route-step"} aria-pressed={routeDetail === "cloud"} onClick={() => setRouteDetail("cloud")}><Cloud size={19} /><span>Firebase</span></button>
               </div>
               <p className="route-description" aria-live="polite">{routeDetail === "truck" ? "DHT22 dan ESP32 membaca kondisi ruang penyimpanan." : "Firebase mengirim pembacaan terbaru ke dashboard."}</p>
