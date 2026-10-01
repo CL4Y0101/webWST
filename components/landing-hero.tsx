@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { TransitionLink } from "@/components/page-transition";
 
 const titles = ["terpantau.", "terkendali.", "terjaga."];
 
@@ -31,8 +31,8 @@ export default function LandingHero() {
         </h1>
         <p className="landing-lede">Pantau suhu dan kelembapan ruang penyimpanan tuna, dari sensor di armada hingga pembacaan di dashboard.</p>
         <div className="landing-actions">
-          <Link className="landing-cta" href="/dashboard">Buka dashboard <ArrowRight size={18} aria-hidden="true" /></Link>
-          <Link className="landing-link" href="/dashboard#cara-kerja">Lihat cara kerja</Link>
+          <TransitionLink className="landing-cta" href="/dashboard">Buka dashboard <ArrowRight size={18} aria-hidden="true" /></TransitionLink>
+          <TransitionLink className="landing-link" href="/dashboard#cara-kerja">Lihat cara kerja</TransitionLink>
         </div>
         <p className="landing-path">DHT22 + ESP32 <span aria-hidden="true">/</span> Firebase <span aria-hidden="true">/</span> Dashboard</p>
       </div>

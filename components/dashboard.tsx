@@ -2,16 +2,17 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { onValue, limitToLast, orderByChild, query, ref } from "firebase/database";
 import {
   Activity, ArrowUpRight, BellRing, ChevronDown, CircleAlert, Clock3,
-  Cloud, Database, Droplets, Gauge, Menu, Radio, ShieldCheck,
-  Thermometer, Truck, Waves, Wifi, X,
+  Cloud, Database, Droplets, Gauge, Radio, ShieldCheck,
+  Thermometer, Truck, Waves, Wifi,
 } from "lucide-react";
 import { firebaseDatabase, hasFirebaseConfig } from "@/lib/firebase";
 import { conditionFor, demoSeed, normalizeReadings, PROTOTYPE_LIMITS, type Condition, type Reading } from "@/lib/readings";
 import ScrollWordReveal from "@/components/scroll-word-reveal";
+import { TransitionLink } from "@/components/page-transition";
+import IntegrationCard from "@/components/integration-card";
 
 type Scenario = "normal" | "warning" | "critical";
 type Connection = "demo" | "connecting" | "live" | "empty" | "error";
@@ -199,7 +200,6 @@ function TrendChart({ readings, metric }: { readings: Reading[]; metric: Metric 
 export default function Dashboard() {
   const { readings, connection, scenario, changeScenario } = useReadings();
   const [clock, setClock] = useState(() => Date.now());
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [historyExpanded, setHistoryExpanded] = useState(false);
   const [routeDetail, setRouteDetail] = useState<"truck" | "cloud">("truck");
   useEffect(() => {
@@ -226,20 +226,12 @@ export default function Dashboard() {
       <a className="skip-link" href="#monitoring">Lewati ke dashboard</a>
       <header className="site-header">
         <div className="container header-inner">
-          <Link className="brand" href="/" aria-label="TunaGuard, kembali ke beranda">
+          <TransitionLink className="brand" href="/" aria-label="TunaGuard, kembali ke beranda">
             <span className="brand-mark"><Waves size={23} strokeWidth={2.7} /></span>
             <span>Tuna<span>Guard</span><small>MONITORING SYSTEM</small></span>
-          </Link>
-          <nav id="primary-navigation" className={`main-nav ${mobileOpen ? "is-open" : ""}`} aria-label="Navigasi utama">
-            <Link href="/" onClick={() => setMobileOpen(false)}><Gauge size={17} /> Beranda</Link>
-            <a className="is-current" href="#dashboard" onClick={() => setMobileOpen(false)}><Activity size={17} /> Dashboard</a>
-            <a href="#riwayat" onClick={() => setMobileOpen(false)}><Clock3 size={17} /> Riwayat data</a>
-            <a href="#peringatan" onClick={() => setMobileOpen(false)}><BellRing size={17} /> Peringatan</a>
-            <a href="#cara-kerja" onClick={() => setMobileOpen(false)}><Database size={17} /> Cara kerja</a>
-          </nav>
+          </TransitionLink>
           <div className="header-actions">
             <span className={`connection-chip connection-${connection}`}><span className="connection-dot" />{connection === "live" ? "Sistem online" : connection === "demo" ? "Demo aktif" : connection === "error" ? "Koneksi gagal" : "Menunggu data"}</span>
-            <button className="mobile-toggle" type="button" aria-label={mobileOpen ? "Tutup menu" : "Buka menu"} aria-expanded={mobileOpen} aria-controls="primary-navigation" onClick={() => setMobileOpen((open) => !open)}>{mobileOpen ? <X size={22} /> : <Menu size={22} />}<span>{mobileOpen ? "Tutup" : "Menu"}</span></button>
           </div>
         </div>
       </header>
@@ -313,10 +305,10 @@ export default function Dashboard() {
         </section>
 
         <ScrollWordReveal />
-        <section className="workflow-section" id="cara-kerja" aria-labelledby="workflow-heading"><div className="container"><div className="workflow-heading"><div><span className="eyebrow section-eyebrow"><span className="eyebrow-line" /> CARA KERJA</span><h2 id="workflow-heading">Dari sensor, langsung ke keputusan.</h2></div><p>Alur data sederhana yang membantu tim logistik merespons perubahan kondisi lebih cepat.</p></div><div className="workflow-grid"><div className="workflow-step"><span className="step-number">01 / DETEKSI</span><span className="step-icon"><Thermometer size={25} /></span><h3>Sensor membaca</h3><p>DHT22 mengukur suhu dan kelembapan di ruang penyimpanan tuna.</p></div><div className="workflow-step"><span className="step-number">02 / KIRIM</span><span className="step-icon"><Wifi size={25} /></span><h3>Data dikirim</h3><p>ESP32 mengolah status lalu mengirimkan pembacaan melalui WiFi.</p></div><div className="workflow-step"><span className="step-number">03 / SIMPAN</span><span className="step-icon"><Database size={25} /></span><h3>Firebase mencatat</h3><p>Setiap nilai, status, dan waktu tersimpan sebagai riwayat perjalanan.</p></div><div className="workflow-step"><span className="step-number">04 / PANTAU</span><span className="step-icon"><Activity size={25} /></span><h3>Tim memantau</h3><p>Dashboard menampilkan kondisi terkini dan peringatan saat batas terlampaui.</p></div></div></div></section>
+        <section className="workflow-section" id="cara-kerja" aria-labelledby="workflow-heading"><div className="container"><div className="workflow-heading"><div><span className="eyebrow section-eyebrow"><span className="eyebrow-line" /> CARA KERJA</span><h2 id="workflow-heading">Dari sensor ke pembacaan.</h2></div><p>Ikuti hubungan perangkat, penyimpanan data, dan tampilan monitoring.</p></div><IntegrationCard /></div></section>
       </main>
 
-      <footer className="site-footer"><div className="container footer-bottom"><Link className="brand footer-brand" href="/"><span className="brand-mark"><Waves size={21} strokeWidth={2.7} /></span><span>Tuna<span>Guard</span><small>MONITORING SYSTEM</small></span></Link><span>Prototype monitoring IoT untuk logistik tuna · © {new Date().getFullYear()} TunaGuard</span><a className="footer-back" href="#dashboard">Kembali ke ringkasan <ArrowUpRight size={16} /></a></div></footer>
+      <footer className="site-footer"><div className="container footer-bottom"><TransitionLink className="brand footer-brand" href="/"><span className="brand-mark"><Waves size={21} strokeWidth={2.7} /></span><span>Tuna<span>Guard</span><small>MONITORING SYSTEM</small></span></TransitionLink><span>Prototype monitoring IoT untuk logistik tuna · © {new Date().getFullYear()} TunaGuard</span><a className="footer-back" href="#dashboard">Kembali ke ringkasan <ArrowUpRight size={16} /></a></div></footer>
     </div>
   );
 }
