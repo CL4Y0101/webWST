@@ -13,6 +13,7 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("idle");
   const target = useRef<string | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const navigate = useCallback((href: string) => {
     const nextPath = href.split("#")[0] || pathname;
@@ -22,12 +23,16 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
     }
     if (target.current) return;
     target.current = href;
+    contentRef.current?.style.setProperty("--cut-y", `${window.scrollY + window.innerHeight / 2}px`);
     setPhase("cover");
   }, [pathname, router]);
 
   useEffect(() => {
     if (phase !== "cover" || !target.current || pathname !== target.current.split("#")[0]) return;
-    const frame = window.requestAnimationFrame(() => setPhase("reveal"));
+    const frame = window.requestAnimationFrame(() => {
+      contentRef.current?.style.setProperty("--cut-y", `${window.scrollY + window.innerHeight / 2}px`);
+      setPhase("reveal");
+    });
     return () => window.cancelAnimationFrame(frame);
   }, [pathname, phase]);
 
@@ -39,7 +44,8 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
 
   return (
     <NavigationContext.Provider value={navigate}>
-      {children}
+      <div ref={contentRef} className={`page-content page-content-${phase}`}>{children}</div>
+      <div className={`page-cut-line page-cut-line-${phase}`} aria-hidden="true" />
       <div
         className={`page-wipe page-wipe-${phase}`}
         aria-hidden="true"
