@@ -7,7 +7,7 @@
   --text-primary: #173746;
   --text-secondary: #58727e;
   --primary: #087ea3;
-  --normal: #22c55e;
+  --normal: #078dc8;
   --warning: #f59e0b;
   --critical: #d84c4c;
 }
@@ -49,7 +49,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid #7dd3fc; outline-offs
 .hero-eyebrow { color: #257591; letter-spacing: 1.5px; font-size: 10px; }
 .hero-divider { width: 3px; height: 3px; border-radius: 50%; background: #8eb6c3; }
 .hero-status { display: flex; align-items: center; gap: 17px; margin: 22px 0 0; }
-.hero-status-icon { width: 56px; height: 56px; flex: none; display: grid; place-items: center; border-radius: 14px; background: #e4f6eb; color: #15935a; border: 1px solid #bfdfcc; }
+.hero-status-icon { width: 56px; height: 56px; flex: none; display: grid; place-items: center; border-radius: 14px; background: #e4f3f8; color: var(--normal); border: 1px solid #b8dce8; }
 .hero-status-warning .hero-status-icon { color: #a46a08; background: #fff3dc; border-color: #efd9aa; }
 .hero-status-critical .hero-status-icon { color: #c94c55; background: #ffefef; border-color: #ecc7c8; }
 .hero-status-waiting .hero-status-icon { color: #6f8895; background: #edf2f5; border-color: #d5e2e8; }
@@ -144,7 +144,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid #7dd3fc; outline-offs
 .control-status { grid-column: 1; grid-row: 2 / 5; margin-top: 0; background: #f3f8fa; border: 1px solid #d4e5eb; }
 .control-status-label, .scenario-title { color: #55717d; }
 .control-status p { color: #617b86; font-size: 11px; }
-.status-pill { border-radius: 6px; background: #e6f6ec; color: #188457; font-size: 10px; padding: 6px 9px; }
+.status-pill { border-radius: 6px; background: #e4f3f8; color: #075b7d; font-size: 10px; padding: 6px 9px; }
+.status-normal .status-dot { background: var(--normal); }
 .status-warning { background: #fff3df; color: #94650f; }
 .status-critical { background: #fff0ee; color: #b94747; }
 .control-divider { display: none; }
